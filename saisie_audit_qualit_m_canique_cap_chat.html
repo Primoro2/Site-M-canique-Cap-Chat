@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="fr" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mécanique Cap Chat - Gestion des Audits Qualité AMO 30-30</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        aviation: {
+                            dark: '#0f172a',
+                            panel: '#1e293b',
+                            border: '#334155',
+                            red: '#dc2626',
+                            redhover: '#b91c1c',
+                            silver: '#cbd5e1',
+                            accent: '#f87171'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        /* Style pour l'emblème rond détouré */
+        .logo-cap-chat {
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.35);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100">
+
+    <!-- ÉCRAN DE CONNEXION / LOGIN (Bloquant au démarrage) -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-md w-full p-8 shadow-2xl relative space-y-6">
+            <div class="text-center space-y-3">
+                <div class="inline-block relative">
+                    <img src="input_file_0.png" alt="Mécanique Cap Chat AMO 30-30" class="w-28 h-28 mx-auto logo-cap-chat border-2 border-red-600/80 p-0.5">
+                </div>
+                <div>
+                    <h2 class="text-2xl font-black text-white tracking-wide">MÉCANIQUE CAP CHAT</h2>
+                    <p class="text-xs font-bold text-red-500 uppercase tracking-widest mt-0.5">Maintenance Aviation • AMO 30-30</p>
+                </div>
+                <p class="text-xs text-slate-400">Portail de Saisie & Contrôle des Audits Qualité</p>
+            </div>
+
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Identifiant / Nom de l'Inspecteur <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <input type="text" id="loginUsernameInput" required placeholder="Entrez votre nom ou identifiant (ex: Mathieu Tremblay)..." class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-3 pr-10 py-2.5 text-sm text-slate-100 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+                        <i class="fa-solid fa-user-gear text-slate-500 absolute right-3 top-3.5 text-xs"></i>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Mot de Passe / Code PIN <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <input type="password" id="loginPassword" required placeholder="Entrez votre mot de passe..." class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-3 pr-10 py-2.5 text-sm text-slate-100 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+                        <i class="fa-solid fa-key text-slate-500 absolute right-3 top-3.5 text-xs"></i>
+                    </div>
+                </div>
+
+                <div id="loginError" class="text-xs font-semibold text-red-400 bg-red-950/40 border border-red-900/50 p-2.5 rounded-lg hidden flex items-center gap-2">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span id="loginErrorMsg">Veuillez renseigner tous les champs.</span>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg shadow-lg shadow-red-950/50 flex items-center justify-center gap-2 transition">
+                    <i class="fa-solid fa-right-to-bracket"></i> Connexion au Système
+                </button>
+            </form>
+
+            <div class="pt-2 text-center text-[11px] text-slate-500 border-t border-slate-800">
+                <p>Saisie libre activée : entrez votre identifiant et votre code PIN pour signer vos rapports d'audit.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER DE L'APPLICATION -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap justify-between items-center gap-4">
+            <!-- Logo Cap Chat Officiel -->
+            <div class="flex items-center space-x-3">
+                <img src="input_file_0.png" alt="Logo Mécanique Cap Chat" class="w-12 h-12 logo-cap-chat border-2 border-red-600 p-0.5 bg-slate-950">
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h1 class="text-lg font-black tracking-wider text-white">MÉCANIQUE CAP CHAT</h1>
+                        <span class="bg-red-950 text-red-400 text-[10px] font-bold px-2 py-0.5 rounded border border-red-800">AMO 30-30</span>
+                    </div>
+                    <p class="text-xs text-slate-400 font-medium">Système de Gestion Qualité & Maintenance Aviation</p>
+                </div>
+            </div>
+
+            <!-- Profil Utilisateur & Déconnexion -->
+            <div id="authSection" class="flex items-center space-x-3">
+                <!-- Se remplit dynamiquement via JS -->
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTENU PRINCIPAL -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Banner Toast Notification -->
+        <div id="toastNotification" class="hidden p-4 rounded-lg shadow-lg text-sm font-medium flex justify-between items-center transition-all duration-300">
+            <span id="toastText">Message notification</span>
+            <button onclick="hideToast()" class="text-slate-400 hover:text-white ml-4"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Navigation Onglets -->
+        <div class="flex border-b border-slate-800 space-x-2">
+            <button id="tabFormBtn" onclick="switchTab('form')" class="px-5 py-2.5 font-medium text-sm rounded-t-lg border-b-2 border-red-600 text-white bg-slate-900 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-red-500"></i> Saisie d'un Rapport d'Audit
+            </button>
+            <button id="tabListBtn" onclick="switchTab('list')" class="px-5 py-2.5 font-medium text-sm rounded-t-lg border-b-2 border-transparent text-slate-400 hover:text-slate-200 bg-slate-950 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-list-check"></i> Registre & Historique (<span id="auditCountBadge">0</span>)
+            </button>
+        </div>
+
+        <!-- SECTION 1: FORMULAIRE D'AUDIT -->
+        <section id="formSection" class="bg-slate-900 border border-slate-800 rounded-xl p-5 sm:p-7 shadow-xl">
+            <div class="border-b border-slate-800 pb-4 mb-6 flex justify-between items-center flex-wrap gap-2">
+                <div>
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check text-red-500"></i> Nouvel Audit Qualité
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">Complétez le formulaire de contrôle qualité d'aéronef ou d'équipement.</p>
+                </div>
+                <span class="text-xs text-slate-500 bg-slate-800/80 px-3 py-1 rounded-full border border-slate-700/50">
+                    <i class="fa-solid fa-shield-halved text-slate-400 mr-1"></i> Formulaire Sécurisé
+                </span>
+            </div>
+
+            <form id="auditForm" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                <!-- En-tête : Auditeur & Date (lecture seule) -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Auditeur Responsable</label>
+                        <input type="text" id="auditorInput" readonly class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-sm text-slate-200 font-medium cursor-not-allowed outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Date de l'Audit (Verrouillée)</label>
+                        <div class="relative">
+                            <input type="date" id="auditDate" readonly class="w-full bg-slate-900 border border-slate-700/80 rounded-lg px-3 py-2 text-sm text-slate-300 font-semibold cursor-not-allowed outline-none">
+                            <i class="fa-solid fa-lock text-slate-500 text-xs absolute right-3 top-3" title="Horodatage automatique"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Immatriculation / Secteur <span class="text-red-500">*</span></label>
+                        <input type="text" id="targetRef" required placeholder="Ex: C-GCAT / Ateliers Composants" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none transition">
+                    </div>
+                </div>
+
+                <!-- Informations Aéronef / Document -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Secteur / Exigence Normative <span class="text-red-500">*</span></label>
+                        <select id="auditCategory" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+                            <option value="">-- Sélectionner une catégorie --</option>
+                            <option value="Cellule et Moteurs">Cellule & Groupes Motopropulseurs</option>
+                            <option value="Avionique et Systèmes">Avionique & Systèmes Électriques</option>
+                            <option value="Outillage et Calibrage">Outillage & Équipements de Mesure</option>
+                            <option value="Documentation Technique">Documentation Technique & Bon de Sortie</option>
+                            <option value="Magasin et Pièces">Magasin, Réception & Traçabilité Pièces</option>
+                            <option value="Sécurité et SMS">Sécurité au Travail (SMS)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Référence du Point Contrôlé <span class="text-red-500">*</span></label>
+                        <input type="text" id="auditElement" required placeholder="Ex: RAC 573-04 / Inspection câbles d'aileron" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none">
+                    </div>
+                </div>
+
+                <!-- SÉLECTION DE CONFORMITÉ (C, NC, OBS, N/A) -->
+                <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-2">
+                    <label class="block text-sm font-bold text-slate-200">Indice de Conformité <span class="text-red-500">*</span></label>
+                    <p class="text-xs text-slate-400 mb-3">Sélectionnez le résultat de l'inspection pour ce point de contrôle.</p>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <!-- Conforme -->
+                        <label class="relative flex items-center justify-center p-3 rounded-lg border border-slate-700 bg-slate-900 hover:bg-slate-800/80 cursor-pointer transition text-center group">
+                            <input type="radio" name="conformity" value="C" onchange="toggleConformityFields()" class="sr-only peer" required>
+                            <div class="peer-checked:ring-2 peer-checked:ring-emerald-500 peer-checked:bg-emerald-950/40 w-full h-full absolute inset-0 rounded-lg transition"></div>
+                            <span class="relative flex items-center gap-2 font-bold text-sm text-slate-300 peer-checked:text-emerald-400">
+                                <i class="fa-solid fa-circle-check text-emerald-500"></i> (C) Conforme
+                            </span>
+                        </label>
+
+                        <!-- Non-Conforme -->
+                        <label class="relative flex items-center justify-center p-3 rounded-lg border border-slate-700 bg-slate-900 hover:bg-slate-800/80 cursor-pointer transition text-center group">
+                            <input type="radio" name="conformity" value="NC" onchange="toggleConformityFields()" class="sr-only peer">
+                            <div class="peer-checked:ring-2 peer-checked:ring-red-500 peer-checked:bg-red-950/40 w-full h-full absolute inset-0 rounded-lg transition"></div>
+                            <span class="relative flex items-center gap-2 font-bold text-sm text-slate-300 peer-checked:text-red-400">
+                                <i class="fa-solid fa-triangle-exclamation text-red-500"></i> (NC) Non-Conforme
+                            </span>
+                        </label>
+
+                        <!-- Observation -->
+                        <label class="relative flex items-center justify-center p-3 rounded-lg border border-slate-700 bg-slate-900 hover:bg-slate-800/80 cursor-pointer transition text-center group">
+                            <input type="radio" name="conformity" value="OBS" onchange="toggleConformityFields()" class="sr-only peer">
+                            <div class="peer-checked:ring-2 peer-checked:ring-amber-500 peer-checked:bg-amber-950/40 w-full h-full absolute inset-0 rounded-lg transition"></div>
+                            <span class="relative flex items-center gap-2 font-bold text-sm text-slate-300 peer-checked:text-amber-400">
+                                <i class="fa-solid fa-eye text-amber-500"></i> (OBS) Observation
+                            </span>
+                        </label>
+
+                        <!-- Non-Applicable -->
+                        <label class="relative flex items-center justify-center p-3 rounded-lg border border-slate-700 bg-slate-900 hover:bg-slate-800/80 cursor-pointer transition text-center group">
+                            <input type="radio" name="conformity" value="N/A" onchange="toggleConformityFields()" class="sr-only peer">
+                            <div class="peer-checked:ring-2 peer-checked:ring-slate-500 peer-checked:bg-slate-800/80 w-full h-full absolute inset-0 rounded-lg transition"></div>
+                            <span class="relative flex items-center gap-2 font-bold text-sm text-slate-400 peer-checked:text-slate-200">
+                                <i class="fa-solid fa-ban text-slate-500"></i> (N/A) Non-Applicable
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- CHAMPS CONDITIONNELS : UNIQUEMENT SI NC EST SÉLECTIONNÉ -->
+                <div id="nonConformityFields" class="hidden space-y-5 p-5 bg-red-950/20 border-2 border-red-900/50 rounded-xl transition-all">
+                    <div class="flex items-center gap-2 text-red-400 font-bold border-b border-red-900/40 pb-2">
+                        <i class="fa-solid fa-circle-exclamation text-lg"></i>
+                        <h3>Détails d'Écart de Conformité (Obligatoires pour NC)</h3>
+                    </div>
+
+                    <!-- Niveau de sévérité -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Niveau de Sévérité <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <label class="flex items-center space-x-2 bg-slate-900 border border-slate-700 p-2.5 rounded-lg cursor-pointer hover:border-slate-500">
+                                <input type="radio" name="severity" value="Mineure" class="accent-amber-500">
+                                <span class="text-sm font-medium text-amber-300"><i class="fa-solid fa-circle-info text-amber-400 mr-1"></i> Mineure</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-slate-900 border border-slate-700 p-2.5 rounded-lg cursor-pointer hover:border-slate-500">
+                                <input type="radio" name="severity" value="Majeure" class="accent-orange-500">
+                                <span class="text-sm font-medium text-orange-400"><i class="fa-solid fa-triangle-exclamation text-orange-500 mr-1"></i> Majeure</span>
+                            </label>
+                            <label class="flex items-center space-x-2 bg-slate-900 border border-slate-700 p-2.5 rounded-lg cursor-pointer hover:border-slate-500">
+                                <input type="radio" name="severity" value="Critique" class="accent-red-600">
+                                <span class="text-sm font-medium text-red-400"><i class="fa-solid fa-radiation text-red-500 mr-1"></i> Critique / Vol Bloqué</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Constat de non-conformité -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Constat / Observation Factuelle <span class="text-red-500">*</span></label>
+                        <textarea id="ncFindings" rows="3" placeholder="Décrire précisément l'écart constaté..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none custom-scrollbar"></textarea>
+                    </div>
+
+                    <!-- Analyse cause racine -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Analyse de la Cause Racine (Root Cause Analysis) <span class="text-red-500">*</span></label>
+                        <textarea id="rootCause" rows="2" placeholder="Pourquoi le problème s'est-il produit ? (Méthode des 5 Pourquoi / Facteurs Humains)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none custom-scrollbar"></textarea>
+                    </div>
+
+                    <!-- Plan d'Action Correctif (PAC) -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Plan d'Action Correctif et Préventif (PAC) <span class="text-red-500">*</span></label>
+                        <textarea id="capaPlan" rows="2" placeholder="Actions immédiates pour corriger et mesures préventives..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none custom-scrollbar"></textarea>
+                    </div>
+                </div>
+
+                <!-- Champ de remarques générales pour C, OBS et N/A -->
+                <div id="generalCommentsField">
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Remarques ou Commentaires Complémentaires</label>
+                    <textarea id="generalComments" rows="2" placeholder="Note ou observation optionnelle..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-3 text-sm text-slate-100 focus:border-slate-500 outline-none custom-scrollbar"></textarea>
+                </div>
+
+                <!-- Soumission -->
+                <div class="flex justify-end gap-3 pt-2">
+                    <button type="reset" onclick="resetFormState()" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium rounded-lg transition">
+                        Réinitialiser
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold text-sm rounded-lg shadow-lg shadow-red-950/50 flex items-center gap-2 transition">
+                        <i class="fa-solid fa-floppy-disk"></i> Enregistrer le Rapport
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- SECTION 2: REGISTRE ET HISTORIQUE DE DONNÉES -->
+        <section id="listSection" class="hidden space-y-4">
+            <!-- Recherche & Filtres -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-lg flex flex-wrap gap-3 justify-between items-center">
+                <div class="flex flex-wrap gap-2 items-center flex-1 min-w-[280px]">
+                    <div class="relative flex-1 min-w-[200px]">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-500 text-sm"></i>
+                        <input type="text" id="searchInput" oninput="filterAudits()" placeholder="Rechercher par référence, inspection..." class="w-full bg-slate-950 border border-slate-700 rounded-lg pl-9 pr-3 py-2 text-sm text-slate-200 outline-none focus:border-red-500">
+                    </div>
+                    
+                    <!-- Filtre Conformité -->
+                    <select id="filterConformity" onchange="filterAudits()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none">
+                        <option value="ALL">Toutes Conformités</option>
+                        <option value="NC">Non-Conformes (NC)</option>
+                        <option value="C">Conformes (C)</option>
+                        <option value="OBS">Observations (OBS)</option>
+                        <option value="N/A">Non-Applicables (N/A)</option>
+                    </select>
+
+                    <!-- Filtre Employé -->
+                    <select id="filterAuditor" onchange="filterAudits()" class="bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-200 outline-none">
+                        <option value="ALL">Tous les Inspecteurs</option>
+                    </select>
+                </div>
+
+                <!-- Export / Import JSON -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="exportJSON()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 transition" title="Télécharger la base JSON">
+                        <i class="fa-solid fa-download text-slate-400"></i> Exporter JSON
+                    </button>
+                    <label class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 flex items-center gap-1.5 cursor-pointer transition" title="Charger un fichier JSON">
+                        <i class="fa-solid fa-upload text-slate-400"></i> Importer JSON
+                        <input type="file" id="importFile" accept=".json" onchange="importJSON(event)" class="hidden">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Tableau Dynamique -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl shadow-xl overflow-hidden">
+                <div class="overflow-x-auto custom-scrollbar">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-slate-950 text-xs uppercase font-semibold text-slate-400 border-b border-slate-800">
+                            <tr>
+                                <th class="p-4">Date & Ref</th>
+                                <th class="p-4">Inspecteur</th>
+                                <th class="p-4">Secteur / Point</th>
+                                <th class="p-4 text-center">Indice</th>
+                                <th class="p-4">Sévérité / Détails</th>
+                                <th class="p-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditTableBody" class="divide-y divide-slate-800/60">
+                            <!-- Rempli dynamiquement -->
+                        </tbody>
+                    </table>
+                </div>
+                <div id="emptyState" class="p-10 text-center text-slate-500 hidden">
+                    <i class="fa-solid fa-folder-open text-4xl mb-2"></i>
+                    <p class="text-sm">Aucun rapport d'audit ne correspond à vos critères.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DETAIL AUDIT -->
+    <div id="detailModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-xl max-w-2xl w-full p-6 shadow-2xl relative space-y-4 max-h-[90vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            <div id="modalContent">
+                <!-- Rempli par JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT DE LOGIQUE APPLICATIVE -->
+    <script>
+        /* COMPTES UTILISATEURS AVEC AUTHENTIFICATION PIN/MOT DE PASSE */
+        const PREDEFINED_USERS = [
+            { id: "EMP-01", name: "Mathieu Tremblay", role: "Inspecteur Qualité Principal", pin: "1234" },
+            { id: "EMP-02", name: "Jean-François Roy", role: "Technicien Aéronef AME", pin: "0000" },
+            { id: "EMP-03", name: "Chantal Gagnon", role: "Responsable Maintenance AMO", pin: "5678" }
+        ];
+
+        /* ÉTAT GLOBAL DE L'APPLICATION */
+        let currentUser = null; // Session active
+        let auditDatabase = [];
+
+        // Données d'exemple initiales
+        const INITIAL_MOCK_DATA = [
+            {
+                id: "AUD-2026-001",
+                date: new Date().toISOString().split('T')[0],
+                auditor: "Mathieu Tremblay",
+                targetRef: "C-GCAT",
+                category: "Cellule et Moteurs",
+                element: "Inspection réservoir d'aile gauche",
+                conformity: "NC",
+                severity: "Majeure",
+                findings: "Traces de corrosion galvano-chimique observées près des rivets de fixation sous la nervure N° 4.",
+                rootCause: "Produit d'étanchéité détérioré suite aux dernières infiltrations d'humidité lors du remisage.",
+                capaPlan: "Remplacement des rivets affectés, application du primaire anticorrosion et mastic aéronautique type PR-1422.",
+                comments: "Traitement planifié durant la visite des 100 heures."
+            },
+            {
+                id: "AUD-2026-002",
+                date: new Date().toISOString().split('T')[0],
+                auditor: "Chantal Gagnon",
+                targetRef: "Atelier Avionique",
+                category: "Outillage et Calibrage",
+                element: "Vérification Multimètre Fluke ID-441",
+                conformity: "C",
+                severity: null,
+                findings: "",
+                rootCause: "",
+                capaPlan: "",
+                comments: "Étiquette d'étalonnage conforme. Échéance valide jusqu'en Décembre 2026."
+            }
+        ];
+
+        /* INITIALISATION DU SYSTÈME */
+        window.onload = function() {
+            // Charger la banque de données localement
+            const savedData = localStorage.getItem('capchat_audits_db');
+            if (savedData) {
+                try {
+                    auditDatabase = JSON.parse(savedData);
+                } catch(e) {
+                    auditDatabase = INITIAL_MOCK_DATA;
+                }
+            } else {
+                auditDatabase = INITIAL_MOCK_DATA;
+                saveToLocalStorage();
+            }
+
+            // Date d'aujourd'hui fixe
+            document.getElementById('auditDate').value = new Date().toISOString().split('T')[0];
+
+            // Vérifier s'il y avait une session active enregistrée
+            const savedUser = sessionStorage.getItem('capchat_logged_user_info');
+            if (savedUser) {
+                try {
+                    const userObj = JSON.parse(savedUser);
+                    loginUserSuccess(userObj);
+                } catch(e) {
+                    showLoginModal();
+                }
+            } else {
+                showLoginModal();
+            }
+
+            populateAuditorFilter();
+            renderAuditList();
+        };
+
+        function saveToLocalStorage() {
+            localStorage.setItem('capchat_audits_db', JSON.stringify(auditDatabase));
+        }
+
+        /* GESTION LOGIN LIBRE ET MOT DE PASSE */
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const inputUsername = document.getElementById('loginUsernameInput').value.trim();
+            const inputPin = document.getElementById('loginPassword').value.trim();
+            const errorDiv = document.getElementById('loginError');
+
+            if (!inputUsername || !inputPin) {
+                errorDiv.classList.remove('hidden');
+                document.getElementById('loginErrorMsg').innerText = "Veuillez renseigner le nom d'utilisateur et le mot de passe.";
+                return;
+            }
+
+            // Vérifier si l'utilisateur correspond à un compte prédéfini avec un PIN spécifique
+            const foundUser = PREDEFINED_USERS.find(u => 
+                u.name.toLowerCase() === inputUsername.toLowerCase() || 
+                u.id.toLowerCase() === inputUsername.toLowerCase()
+            );
+
+            if (foundUser) {
+                if (foundUser.pin !== inputPin) {
+                    errorDiv.classList.remove('hidden');
+                    document.getElementById('loginErrorMsg').innerText = "Code PIN/Mot de passe incorrect pour cet identifiant.";
+                    return;
+                }
+            }
+
+            // Création de l'objet de session utilisateur (Prédéfini ou Personnalisé)
+            const user = {
+                id: foundUser ? foundUser.id : `USER-${Math.floor(100 + Math.random() * 900)}`,
+                name: foundUser ? foundUser.name : inputUsername,
+                role: foundUser ? foundUser.role : "Inspecteur / Technicien Maintenance"
+            };
+
+            errorDiv.classList.add('hidden');
+            document.getElementById('loginPassword').value = '';
+            loginUserSuccess(user);
+        }
+
+        function loginUserSuccess(user) {
+            currentUser = user;
+            sessionStorage.setItem('capchat_logged_user_info', JSON.stringify(user));
+            document.getElementById('loginModal').classList.add('hidden');
+            
+            // Mettre à jour l'en-tête et le champ auditeur du formulaire
+            document.getElementById('auditorInput').value = `${currentUser.name} (${currentUser.id})`;
+            renderHeaderUser();
+            showToast(`Connexion réussie. Bienvenue, ${currentUser.name}`, 'success');
+        }
+
+        function logout() {
+            currentUser = null;
+            sessionStorage.removeItem('capchat_logged_user_info');
+            document.getElementById('authSection').innerHTML = '';
+            showLoginModal();
+            showToast("Vous avez été déconnecté.", 'info');
+        }
+
+        function renderHeaderUser() {
+            const container = document.getElementById('authSection');
+            if (!currentUser) return;
+
+            container.innerHTML = `
+                <div class="flex items-center space-x-3 bg-slate-950 px-3.5 py-1.5 rounded-lg border border-slate-800">
+                    <div class="text-right">
+                        <div class="text-xs font-bold text-slate-100">${currentUser.name}</div>
+                        <div class="text-[10px] text-slate-400 font-medium">${currentUser.role}</div>
+                    </div>
+                    <button onclick="logout()" class="p-1.5 text-slate-400 hover:text-red-400 transition" title="Se déconnecter">
+                        <i class="fa-solid fa-right-from-bracket text-sm"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        /* GESTION DE LA NAVIGATION */
+        function switchTab(tabName) {
+            const formTab = document.getElementById('tabFormBtn');
+            const listTab = document.getElementById('tabListBtn');
+            const formSection = document.getElementById('formSection');
+            const listSection = document.getElementById('listSection');
+
+            if (tabName === 'form') {
+                formTab.className = "px-5 py-2.5 font-medium text-sm rounded-t-lg border-b-2 border-red-600 text-white bg-slate-900 transition-colors flex items-center gap-2";
+                listTab.className = "px-5 py-2.5 font-medium text-sm rounded-t-lg border-b-2 border-transparent text-slate-400 hover:text-slate-200 bg-slate-950 transition-colors flex items-center gap-2";
+                formSection.classList.remove('hidden');
+                listSection.classList.add('hidden');
+            } else {
+                listTab.className = "px-5 py-2.5 font-medium text-sm rounded-t-lg border-b-2 border-red-600 text-white bg-slate-900 transition-colors flex items-center gap-2";
+                formTab.className = "px-5 py-2.5 font-medium text-sm rounded-t-lg border-b-2 border-transparent text-slate-400 hover:text-slate-200 bg-slate-950 transition-colors flex items-center gap-2";
+                listSection.classList.remove('hidden');
+                formSection.classList.add('hidden');
+            }
+        }
+
+        /* LOGIQUE CONDITIONNELLE STRICTE POUR NON-CONFORMITÉ (NC) */
+        function toggleConformityFields() {
+            const conformity = document.querySelector('input[name="conformity"]:checked')?.value;
+            const ncContainer = document.getElementById('nonConformityFields');
+
+            const ncInputs = ['ncFindings', 'rootCause', 'capaPlan'];
+
+            if (conformity === 'NC') {
+                ncContainer.classList.remove('hidden');
+                ncInputs.forEach(id => document.getElementById(id).setAttribute('required', 'true'));
+                document.querySelectorAll('input[name="severity"]').forEach(r => r.setAttribute('required', 'true'));
+            } else {
+                ncContainer.classList.add('hidden');
+                ncInputs.forEach(id => {
+                    const el = document.getElementById(id);
+                    el.removeAttribute('required');
+                    el.value = '';
+                });
+                document.querySelectorAll('input[name="severity"]').forEach(r => {
+                    r.removeAttribute('required');
+                    r.checked = false;
+                });
+            }
+        }
+
+        function resetFormState() {
+            setTimeout(() => {
+                document.getElementById('auditDate').value = new Date().toISOString().split('T')[0];
+                if (currentUser) {
+                    document.getElementById('auditorInput').value = `${currentUser.name} (${currentUser.id})`;
+                }
+                toggleConformityFields();
+            }, 50);
+        }
+
+        /* SOUMISSION DU FORMULAIRE AUDIT */
+        function handleFormSubmit(event) {
+            event.preventDefault();
+
+            if (!currentUser) {
+                showToast("Erreur: Aucune session active.", "error");
+                showLoginModal();
+                return;
+            }
+
+            const conformity = document.querySelector('input[name="conformity"]:checked')?.value;
+            if (!conformity) {
+                showToast("Veuillez sélectionner un indice de conformité.", "error");
+                return;
+            }
+
+            const newAudit = {
+                id: `AUD-${new Date().getFullYear()}-${String(auditDatabase.length + 1).padStart(3, '0')}`,
+                date: document.getElementById('auditDate').value,
+                auditor: currentUser.name,
+                targetRef: document.getElementById('targetRef').value.trim(),
+                category: document.getElementById('auditCategory').value,
+                element: document.getElementById('auditElement').value.trim(),
+                conformity: conformity,
+                severity: conformity === 'NC' ? (document.querySelector('input[name="severity"]:checked')?.value || 'Mineure') : null,
+                findings: conformity === 'NC' ? document.getElementById('ncFindings').value.trim() : '',
+                rootCause: conformity === 'NC' ? document.getElementById('rootCause').value.trim() : '',
+                capaPlan: conformity === 'NC' ? document.getElementById('capaPlan').value.trim() : '',
+                comments: document.getElementById('generalComments').value.trim()
+            };
+
+            auditDatabase.unshift(newAudit);
+            saveToLocalStorage();
+            
+            document.getElementById('auditForm').reset();
+            resetFormState();
+            populateAuditorFilter();
+            renderAuditList();
+
+            showToast(`Rapport ${newAudit.id} consigné avec succès.`, "success");
+            switchTab('list');
+        }
+
+        /* RENDU ET FILTRAGE DE L'HISTORIQUE */
+        function populateAuditorFilter() {
+            const select = document.getElementById('filterAuditor');
+            const auditors = [...new Set(auditDatabase.map(a => a.auditor))];
+            
+            select.innerHTML = `<option value="ALL">Tous les Inspecteurs</option>` + 
+                auditors.map(a => `<option value="${a}">${a}</option>`).join('');
+        }
+
+        function renderAuditList(data = auditDatabase) {
+            const tbody = document.getElementById('auditTableBody');
+            const emptyState = document.getElementById('emptyState');
+            document.getElementById('auditCountBadge').innerText = data.length;
+
+            if (data.length === 0) {
+                tbody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            
+            tbody.innerHTML = data.map(audit => {
+                let confBadge = '';
+                if (audit.conformity === 'C') {
+                    confBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/60"><i class="fa-solid fa-circle-check mr-1"></i> (C) Conforme</span>`;
+                } else if (audit.conformity === 'NC') {
+                    confBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-950/80 text-red-400 border border-red-800/60"><i class="fa-solid fa-triangle-exclamation mr-1"></i> (NC) Non-Conforme</span>`;
+                } else if (audit.conformity === 'OBS') {
+                    confBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-950/80 text-amber-400 border border-amber-800/60"><i class="fa-solid fa-eye mr-1"></i> (OBS) Observation</span>`;
+                } else {
+                    confBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700"><i class="fa-solid fa-ban mr-1"></i> (N/A)</span>`;
+                }
+
+                let severityBadge = '-';
+                if (audit.conformity === 'NC' && audit.severity) {
+                    let col = audit.severity === 'Critique' ? 'text-red-400 font-bold' : audit.severity === 'Majeure' ? 'text-orange-400' : 'text-amber-300';
+                    severityBadge = `<span class="text-xs ${col}"><i class="fa-solid fa-shield-virus mr-1"></i>${audit.severity}</span>`;
+                }
+
+                return `
+                    <tr class="hover:bg-slate-800/40 transition">
+                        <td class="p-4">
+                            <div class="font-bold text-white text-xs">${audit.id}</div>
+                            <div class="text-xs text-slate-400">${audit.date}</div>
+                            <div class="text-xs font-medium text-red-400 mt-0.5">${audit.targetRef}</div>
+                        </td>
+                        <td class="p-4 text-xs font-medium text-slate-300">
+                            <i class="fa-regular fa-user text-slate-500 mr-1"></i>${audit.auditor}
+                        </td>
+                        <td class="p-4">
+                            <div class="text-xs font-semibold text-slate-200">${audit.element}</div>
+                            <div class="text-[11px] text-slate-400">${audit.category}</div>
+                        </td>
+                        <td class="p-4 text-center">
+                            ${confBadge}
+                        </td>
+                        <td class="p-4 text-xs">
+                            ${severityBadge}
+                            ${audit.findings ? `<p class="text-xs text-slate-400 truncate max-w-xs mt-1" title="${audit.findings}">${audit.findings}</p>` : ''}
+                        </td>
+                        <td class="p-4 text-right space-x-2">
+                            <button onclick="openModal('${audit.id}')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs rounded border border-slate-700 transition" title="Voir fiche">
+                                <i class="fa-solid fa-eye text-red-400"></i>
+                            </button>
+                            <button onclick="deleteAudit('${audit.id}')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-red-950/60 text-slate-400 hover:text-red-400 text-xs rounded border border-slate-700 transition" title="Supprimer">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterAudits() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const confFilter = document.getElementById('filterConformity').value;
+            const auditorFilter = document.getElementById('filterAuditor').value;
+
+            const filtered = auditDatabase.filter(item => {
+                const matchesSearch = item.id.toLowerCase().includes(query) ||
+                                      item.targetRef.toLowerCase().includes(query) ||
+                                      item.element.toLowerCase().includes(query) ||
+                                      (item.findings && item.findings.toLowerCase().includes(query));
+
+                const matchesConf = confFilter === 'ALL' || item.conformity === confFilter;
+                const matchesAuditor = auditorFilter === 'ALL' || item.auditor === auditorFilter;
+
+                return matchesSearch && matchesConf && matchesAuditor;
+            });
+
+            renderAuditList(filtered);
+        }
+
+        /* DÉTAILS MODAL */
+        function openModal(auditId) {
+            const item = auditDatabase.find(a => a.id === auditId);
+            if (!item) return;
+
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = `
+                <div class="border-b border-slate-800 pb-3 mb-4 flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold text-red-500 tracking-wider">MÉCANIQUE CAP CHAT - RAPPORT ${item.id}</span>
+                        <h3 class="text-lg font-bold text-white mt-0.5">${item.element}</h3>
+                        <p class="text-xs text-slate-400">Aéronef/Réf: <span class="text-slate-200 font-semibold">${item.targetRef}</span> | Catégorie: <span class="text-slate-200">${item.category}</span></p>
+                    </div>
+                    <img src="input_file_0.png" alt="Logo" class="w-12 h-12 logo-cap-chat border border-red-600">
+                </div>
+
+                <div class="space-y-4 text-sm text-slate-300">
+                    <div class="grid grid-cols-2 gap-4 bg-slate-950 p-3 rounded-lg border border-slate-800">
+                        <div>
+                            <span class="text-xs text-slate-500 uppercase block">Auditeur</span>
+                            <span class="font-medium text-slate-200">${item.auditor}</span>
+                        </div>
+                        <div>
+                            <span class="text-xs text-slate-500 uppercase block">Résultat Conformité</span>
+                            <span class="font-bold ${item.conformity === 'NC' ? 'text-red-400' : 'text-emerald-400'}">${item.conformity} ${item.severity ? `(${item.severity})` : ''}</span>
+                        </div>
+                    </div>
+
+                    ${item.conformity === 'NC' ? `
+                        <div class="bg-red-950/20 p-3 rounded-lg border border-red-900/40 space-y-3">
+                            <div>
+                                <h4 class="text-xs font-bold text-red-400 uppercase">Constat d'Écart</h4>
+                                <p class="text-xs text-slate-200 mt-1">${item.findings || 'Aucun'}</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-red-400 uppercase">Analyse Cause Racine (RCA)</h4>
+                                <p class="text-xs text-slate-200 mt-1">${item.rootCause || 'Non spécifiée'}</p>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-red-400 uppercase">Plan d'Action Correctif (PAC)</h4>
+                                <p class="text-xs text-slate-200 mt-1">${item.capaPlan || 'Non spécifié'}</p>
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${item.comments ? `
+                        <div>
+                            <h4 class="text-xs font-semibold text-slate-400 uppercase">Remarques Complémentaires</h4>
+                            <p class="text-xs text-slate-300 bg-slate-950 p-3 rounded border border-slate-800 mt-1">${item.comments}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            document.getElementById('detailModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('detailModal').classList.add('hidden');
+        }
+
+        function deleteAudit(id) {
+            if (confirm(`Confirmez-vous la suppression définitive du rapport d'audit ${id} ?`)) {
+                auditDatabase = auditDatabase.filter(a => a.id !== id);
+                saveToLocalStorage();
+                renderAuditList();
+                showToast(`Audit ${id} supprimé.`, 'info');
+            }
+        }
+
+        /* IMPORT / EXPORT JSON */
+        function exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(auditDatabase, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `audits_cap_chat_${new Date().toISOString().split('T')[0]}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            showToast("Base d'audits exportée au format JSON.", "success");
+        }
+
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    if (Array.isArray(importedData)) {
+                        auditDatabase = importedData;
+                        saveToLocalStorage();
+                        populateAuditorFilter();
+                        renderAuditList();
+                        showToast("Base de données importée avec succès.", "success");
+                    } else {
+                        showToast("Fichier JSON non conforme.", "error");
+                    }
+                } catch (err) {
+                    showToast("Erreur lors de la lecture du fichier.", "error");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        /* NOTIFICATIONS TOAST */
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toastNotification');
+            const text = document.getElementById('toastText');
+
+            toast.className = `p-4 rounded-lg shadow-lg text-sm font-medium flex justify-between items-center transition-all duration-300 border ${
+                type === 'success' ? 'bg-emerald-950 text-emerald-200 border-emerald-800' :
+                type === 'error' ? 'bg-red-950 text-red-200 border-red-800' :
+                'bg-slate-800 text-slate-200 border-slate-700'
+            }`;
+
+            text.innerText = message;
+            toast.classList.remove('hidden');
+
+            setTimeout(() => hideToast(), 4000);
+        }
+
+        function hideToast() {
+            document.getElementById('toastNotification').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
