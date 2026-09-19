@@ -1,0 +1,18 @@
+{
+  "admin": {
+    "password": "0000",
+    "role": "Admin"
+  },
+  "direction": {
+    "password": "0000",
+    "role": "Admin"
+  },
+  "test1": {
+    "password": "1234",
+    "role": "Employe"
+  },
+  "jean": {
+    "password": "1234",
+    "role": "Employe"
+  }
+}
