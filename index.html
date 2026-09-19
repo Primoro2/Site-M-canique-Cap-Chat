@@ -3,92 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mécanique Cap Chat - Audit Qualité</title>
+    <title>Mécanique Cap Chat - Gestion Qualité AMO 30-30</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+        
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
             color: #f8fafc;
+            min-height: 100vh;
         }
-        .aviation-card {
-            background: rgba(30, 41, 59, 0.75);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
+
+        .glass-card-interactive {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card-interactive:hover {
+            border-color: rgba(239, 68, 68, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -10px rgba(239, 68, 68, 0.15);
+        }
+
         .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: rgba(15, 23, 42, 0.6);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #334155;
-            border-radius: 3px;
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(239, 68, 68, 0.5);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between custom-scrollbar">
+<body class="flex flex-col justify-between custom-scrollbar">
 
     <!-- MODAL DE CONNEXION -->
-    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4">
-        <div class="aviation-card w-full max-w-md p-8 rounded-2xl shadow-2xl border border-slate-700/50">
-            <div class="flex flex-col items-center mb-6 text-center">
-                <!-- VRAI LOGO INTÉGRÉ -->
-                <div class="w-28 h-28 mb-4 rounded-full border-2 border-red-600/80 shadow-lg shadow-red-900/40 overflow-hidden bg-black flex items-center justify-center">
-                    <img src="logo.png" alt="Logo Mécanique Cap Chat" class="w-full h-full object-cover">
+    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md p-4">
+        <div class="glass-card w-full max-w-md p-8 rounded-3xl shadow-2xl border border-slate-700/60 relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-32 h-32 bg-red-600/20 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-32 h-32 bg-indigo-600/20 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="flex flex-col items-center mb-8 text-center relative z-10">
+                <!-- LOGO DU GARAGE -->
+                <div class="w-28 h-28 mb-4 rounded-full border-2 border-red-500/80 shadow-xl shadow-red-950/50 overflow-hidden bg-black flex items-center justify-center p-0.5">
+                    <img src="logo.png" alt="Logo Mécanique Cap Chat" class="w-full h-full object-cover rounded-full">
                 </div>
-                <h2 class="text-xl font-bold text-white tracking-wide">MÉCANIQUE CAP CHAT</h2>
-                <p class="text-xs text-slate-400 mt-1">Accès Portail Audit Qualité (AMO 30-30)</p>
+                <h2 class="text-2xl font-black text-white tracking-wider">MÉCANIQUE CAP CHAT</h2>
+                <p class="text-xs text-red-400 font-semibold tracking-widest uppercase mt-1">Maintenance Aviation • AMO 30-30</p>
             </div>
 
-            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4 relative z-10">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Nom d'utilisateur</label>
-                    <input type="text" id="usernameInput" required placeholder="Saisissez votre identifiant" 
-                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition">
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Nom d'utilisateur</label>
+                    <div class="relative">
+                        <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+                        <input type="text" id="usernameInput" required placeholder="Ex: admin, jean..." 
+                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Mot de Passe / PIN</label>
-                    <input type="password" id="passwordInput" required placeholder="Mot de passe" 
-                        class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition">
+                    <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Mot de Passe</label>
+                    <div class="relative">
+                        <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+                        <input type="password" id="passwordInput" required placeholder="••••••••" 
+                            class="w-full bg-slate-900/90 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition">
+                    </div>
                 </div>
 
-                <div id="loginError" class="hidden text-xs text-red-400 bg-red-950/50 border border-red-800/50 rounded-lg p-2.5 text-center">
+                <div id="loginError" class="hidden text-xs text-red-300 bg-red-950/80 border border-red-800/80 rounded-xl p-3 text-center font-medium">
                     Identifiant ou mot de passe incorrect.
                 </div>
 
-                <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 rounded-lg transition shadow-lg shadow-red-600/30">
-                    Se Connecter
+                <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-red-900/40 flex items-center justify-center gap-2 mt-2">
+                    <i data-lucide="log-in" class="w-4 h-4"></i> Accéder au Portail
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- EN-TÊTE PRINCIPAL -->
-    <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full border border-red-500/50 overflow-hidden bg-black flex items-center justify-center">
-                    <img src="logo.png" alt="Logo" class="w-full h-full object-cover">
+    <!-- EN-TÊTE COLORÉ ET VISUEL -->
+    <header class="bg-slate-900/80 backdrop-blur-xl border-b border-slate-800/80 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full border-2 border-red-500/80 overflow-hidden bg-black shadow-md flex items-center justify-center p-0.5">
+                    <img src="logo.png" alt="Logo Cap Chat" class="w-full h-full object-cover rounded-full">
                 </div>
                 <div>
-                    <h1 class="text-base font-bold text-white leading-none">MÉCANIQUE CAP CHAT</h1>
-                    <span class="text-[10px] font-medium text-slate-400 tracking-wider">GESTION QUALITÉ (AMO 30-30)</span>
+                    <h1 class="text-lg font-extrabold text-white tracking-wide flex items-center gap-2">
+                        MÉCANIQUE CAP CHAT
+                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 font-semibold">AMO 30-30</span>
+                    </h1>
+                    <p class="text-xs text-slate-400 font-medium">Système de Gestion de la Qualité & Audit</p>
                 </div>
             </div>
 
-            <!-- INFOS UTILISATEUR ET DECONNEXION -->
-            <div id="userInfo" class="flex items-center gap-3">
+            <!-- PROFIL ET DÉCONNEXION -->
+            <div id="userInfo" class="flex items-center gap-4">
                 <div class="text-right hidden sm:block">
-                    <div id="userDisplay" class="text-xs font-semibold text-white">Non connecté</div>
-                    <div id="roleDisplay" class="text-[10px] text-slate-400">Employé</div>
+                    <div id="userDisplay" class="text-sm font-bold text-white">Non connecté</div>
+                    <div id="roleDisplay" class="text-xs text-red-400 font-medium">Employé</div>
                 </div>
-                <button onclick="logout()" title="Déconnexion" class="p-2 text-slate-400 hover:text-red-400 bg-slate-800 hover:bg-slate-700 rounded-lg transition">
+                <button onclick="logout()" title="Déconnexion" class="p-2.5 text-slate-400 hover:text-white bg-slate-800/80 hover:bg-red-600 rounded-xl transition border border-slate-700/60 shadow-sm">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -98,145 +128,195 @@
     <!-- CONTENU PRINCIPAL -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
         
-        <!-- SECTION FORMULAIRE -->
-        <section class="aviation-card rounded-2xl p-6 shadow-xl border border-slate-800">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="file-plus-2" class="text-red-500 w-5 h-5"></i> Saisie d'un Rapport d'Audit
+        <!-- SECTION DASHBOARD STATS RAPIDES -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-5 rounded-2xl flex items-center gap-4">
+                <div class="p-3 bg-blue-500/20 text-blue-400 border border-blue-500/30 rounded-xl">
+                    <i data-lucide="files" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-black text-white" id="statTotal">0</div>
+                    <div class="text-xs font-semibold text-slate-400">Total Audits</div>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl flex items-center gap-4">
+                <div class="p-3 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl">
+                    <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-black text-emerald-400" id="statConforme">0</div>
+                    <div class="text-xs font-semibold text-slate-400">Conformes (C)</div>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl flex items-center gap-4">
+                <div class="p-3 bg-red-500/20 text-red-400 border border-red-500/30 rounded-xl">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-black text-red-400" id="statNonConforme">0</div>
+                    <div class="text-xs font-semibold text-slate-400">Non-Conformes (NC)</div>
+                </div>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl flex items-center gap-4">
+                <div class="p-3 bg-amber-500/20 text-amber-400 border border-amber-500/30 rounded-xl">
+                    <i data-lucide="eye" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <div class="text-2xl font-black text-amber-400" id="statObs">0</div>
+                    <div class="text-xs font-semibold text-slate-400">Observations (OBS)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORMULAIRE DE SAISIE COLORÉ -->
+        <section class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+            <div class="flex items-center justify-between border-b border-slate-700/60 pb-5 mb-6">
+                <h2 class="text-xl font-black text-white flex items-center gap-3">
+                    <span class="p-2 bg-red-600/20 text-red-400 border border-red-500/30 rounded-xl">
+                        <i data-lucide="file-plus-2" class="w-5 h-5"></i>
+                    </span>
+                    Nouveau Rapport d'Audit
                 </h2>
-                <span class="text-xs px-2.5 py-1 bg-slate-800 text-slate-300 rounded-full font-mono">RAC-573</span>
+                <span class="text-xs font-bold px-3 py-1 bg-slate-800/90 text-slate-300 rounded-lg border border-slate-700 font-mono">RAC-573</span>
             </div>
 
             <form id="auditForm" onsubmit="saveAudit(event)" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Date d'audit (Horodatée)</label>
-                        <input type="text" id="auditDate" readonly class="w-full bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-400 font-mono cursor-not-allowed">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Date (Automatique)</label>
+                        <input type="text" id="auditDate" readonly class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-slate-400 font-mono cursor-not-allowed">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Auditeur / Inspecteur</label>
-                        <input type="text" id="auditor" readonly class="w-full bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 font-medium cursor-not-allowed">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Auditeur</label>
+                        <input type="text" id="auditor" readonly class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-red-400 font-bold cursor-not-allowed">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Employé / Technicien Audité</label>
-                        <input type="text" id="employee" required placeholder="Nom du technicien" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Employé / Technicien</label>
+                        <input type="text" id="employee" required placeholder="Nom du technicien" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none transition">
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Élément / Processus Audité</label>
-                        <input type="text" id="itemAudited" required placeholder="Ex: Outillage, Dossier de maintenance C172..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Élément Audité</label>
+                        <input type="text" id="itemAudited" required placeholder="Ex: Outillage, C172 Dossier..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none transition">
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Indice de Conformité</label>
-                        <select id="conformity" onchange="toggleNcFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
-                            <option value="C">Conforme (C)</option>
-                            <option value="NC">Non-Conforme (NC)</option>
-                            <option value="OBS">Observation (OBS)</option>
-                            <option value="NA">Non Applicable (N/A)</option>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Indice de Conformité</label>
+                        <select id="conformity" onchange="toggleNcFields()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none transition">
+                            <option value="C">🟢 Conforme (C)</option>
+                            <option value="NC">🔴 Non-Conforme (NC)</option>
+                            <option value="OBS">🟡 Observation (OBS)</option>
+                            <option value="NA">⚪ Non Applicable (N/A)</option>
                         </select>
                     </div>
                 </div>
 
-                <!-- CHAMPS CONDITIONNELS NC (NON-CONFORMITÉ) -->
-                <div id="ncFields" class="hidden space-y-4 pt-4 border-t border-red-900/30 bg-red-950/10 p-4 rounded-xl border">
-                    <div class="flex items-center gap-2 text-red-400 text-xs font-semibold uppercase tracking-wider mb-2">
-                        <i data-lucide="alert-triangle" class="w-4 h-4"></i> Détails de la Non-Conformité
+                <!-- CHAMPS NC BIEN VISUELS -->
+                <div id="ncFields" class="hidden space-y-4 pt-4 border-t border-red-500/30 bg-red-950/20 p-5 rounded-2xl border border-red-900/50">
+                    <div class="flex items-center gap-2 text-red-400 text-xs font-extrabold uppercase tracking-wider mb-1">
+                        <i data-lucide="alert-octagon" class="w-4 h-4"></i> Analyse de Non-Conformité (NC)
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Niveau de Sévérité</label>
-                        <select id="severity" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Sévérité</label>
+                        <select id="severity" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none">
                             <option value="Faible">Faible (Mineur)</option>
                             <option value="Moyen">Moyen (Majeur)</option>
-                            <option value="Critique">Critique (Sécurité des vols)</option>
+                            <option value="Critique">🚨 Critique (Sécurité des vols)</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Constats d'écart</label>
-                        <textarea id="findings" rows="2" placeholder="Description précise de l'écart constaté..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none"></textarea>
+                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Constats d'écart</label>
+                        <textarea id="findings" rows="2" placeholder="Description de l'écart..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none"></textarea>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Analyse de Cause Racine (RCA)</label>
-                            <textarea id="rootCause" rows="2" placeholder="Pourquoi l'écart s'est-il produit ?" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none"></textarea>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Cause Racine (RCA)</label>
+                            <textarea id="rootCause" rows="2" placeholder="Pourquoi cela s'est-il produit ?" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none"></textarea>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">Plan d'Action Correctif (PAC)</label>
-                            <textarea id="correctiveAction" rows="2" placeholder="Actions prévues pour corriger durablement..." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none"></textarea>
+                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider mb-1.5">Action Corrective (PAC)</label>
+                            <textarea id="correctiveAction" rows="2" placeholder="Actions correctives..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none"></textarea>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-end">
-                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-6 py-2.5 rounded-lg shadow-lg shadow-red-600/30 transition flex items-center gap-2">
-                        <i data-lucide="save" class="w-4 h-4"></i> Enregistrer le Rapport
+                    <button type="submit" class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-500 hover:to-red-600 text-white text-xs font-extrabold px-8 py-3 rounded-xl shadow-lg shadow-red-900/40 transition flex items-center gap-2">
+                        <i data-lucide="check" class="w-4 h-4"></i> Enregistrer l'Audit
                     </button>
                 </div>
             </form>
         </section>
 
-        <!-- HISTORIQUE ET RECHERCHE -->
-        <section class="aviation-card rounded-2xl p-6 shadow-xl border border-slate-800 space-y-4">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-                <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="list" class="text-red-500 w-5 h-5"></i> Registre des Audits Enregistrés
+        <!-- REGISTRE AVEC FILTRES -->
+        <section class="glass-card rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-700/60 pb-5">
+                <h2 class="text-xl font-black text-white flex items-center gap-3">
+                    <span class="p-2 bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 rounded-xl">
+                        <i data-lucide="list-checks" class="w-5 h-5"></i>
+                    </span>
+                    Registre des Audits
                 </h2>
 
                 <div class="flex items-center gap-2">
-                    <button onclick="exportJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5">
-                        <i data-lucide="download" class="w-3.5 h-3.5"></i> Exporter JSON
+                    <button onclick="exportJSON()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center gap-2 shadow-sm">
+                        <i data-lucide="download" class="w-4 h-4 text-indigo-400"></i> Exporter
                     </button>
-                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs px-3 py-2 rounded-lg border border-slate-700 transition flex items-center gap-1.5 cursor-pointer">
-                        <i data-lucide="upload" class="w-3.5 h-3.5"></i> Importer JSON
+                    <label class="bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-4 py-2.5 rounded-xl border border-slate-700 transition flex items-center gap-2 shadow-sm cursor-pointer">
+                        <i data-lucide="upload" class="w-4 h-4 text-emerald-400"></i> Importer
                         <input type="file" id="importFile" accept=".json" onchange="importJSON(event)" class="hidden">
                     </label>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                    <input type="text" id="searchInput" oninput="renderAudits()" placeholder="Rechercher par employé, auditeur, élément..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-400"></i>
+                    <input type="text" id="searchInput" oninput="renderAudits()" placeholder="Rechercher technicien, auditeur, élément..." class="w-full bg-slate-900/80 border border-slate-700 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none">
                 </div>
                 <div>
-                    <select id="filterConformity" onchange="renderAudits()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
-                        <option value="ALL">Tous les indices de conformité</option>
-                        <option value="C">Conforme (C)</option>
-                        <option value="NC">Non-Conforme (NC)</option>
-                        <option value="OBS">Observation (OBS)</option>
-                        <option value="NA">Non Applicable (N/A)</option>
+                    <select id="filterConformity" onchange="renderAudits()" class="w-full bg-slate-900/80 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:ring-2 focus:ring-red-500 outline-none">
+                        <option value="ALL">Tous les statut de conformité</option>
+                        <option value="C">🟢 Conforme (C)</option>
+                        <option value="NC">🔴 Non-Conforme (NC)</option>
+                        <option value="OBS">🟡 Observation (OBS)</option>
+                        <option value="NA">⚪ Non Applicable (N/A)</option>
                     </select>
                 </div>
             </div>
 
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto rounded-2xl border border-slate-800">
                 <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                    <thead class="bg-slate-900/90 text-slate-400 uppercase font-extrabold tracking-wider border-b border-slate-800">
                         <tr>
-                            <th class="p-3">Date</th>
-                            <th class="p-3">Auditeur</th>
-                            <th class="p-3">Employé</th>
-                            <th class="p-3">Élément</th>
-                            <th class="p-3">Conformité</th>
-                            <th class="p-3">Sévérité / Constat</th>
-                            <th class="p-3 text-right">Actions</th>
+                            <th class="p-4">Date</th>
+                            <th class="p-4">Auditeur</th>
+                            <th class="p-4">Employé</th>
+                            <th class="p-4">Élément</th>
+                            <th class="p-4">Conformité</th>
+                            <th class="p-4">Constats / Détails</th>
+                            <th class="p-4 text-right">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="auditTableBody" class="divide-y divide-slate-800 text-slate-300">
+                    <tbody id="auditTableBody" class="divide-y divide-slate-800/80 text-slate-300">
                     </tbody>
                 </table>
             </div>
         </section>
     </main>
 
-    <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        Mécanique Cap Chat (AMO 30-30) &copy; 2026 - Système de Gestion Qualité
+    <footer class="bg-slate-950/80 border-t border-slate-800 py-6 text-center text-xs text-slate-500 font-medium">
+        Mécanique Cap Chat (AMO 30-30) &copy; 2026 - Portail Qualité & Conformité
     </footer>
 
     <script>
@@ -258,18 +338,15 @@
             }
         };
 
-        // Chargement dynamique du fichier JSON externe des utilisateurs
         async function loadUsersConfig() {
             try {
                 const response = await fetch('users.json');
                 if (response.ok) {
                     userDatabase = await response.json();
                 } else {
-                    console.warn("Impossible de charger users.json, repli sur la configuration locale.");
                     userDatabase = { "admin": { "password": "0000", "role": "Admin" } };
                 }
             } catch (error) {
-                console.error("Erreur de chargement users.json:", error);
                 userDatabase = { "admin": { "password": "0000", "role": "Admin" } };
             }
         }
@@ -291,7 +368,6 @@
             const userKey = username.toLowerCase();
             const account = userDatabase[userKey];
 
-            // Vérification stricte
             if (!account || account.password !== password) {
                 errorDiv.classList.remove('hidden');
                 return;
@@ -326,6 +402,13 @@
             } else {
                 ncContainer.classList.add('hidden');
             }
+        }
+
+        function updateStats() {
+            document.getElementById('statTotal').textContent = audits.length;
+            document.getElementById('statConforme').textContent = audits.filter(a => a.conformity === 'C').length;
+            document.getElementById('statNonConforme').textContent = audits.filter(a => a.conformity === 'NC').length;
+            document.getElementById('statObs').textContent = audits.filter(a => a.conformity === 'OBS').length;
         }
 
         function saveAudit(e) {
@@ -375,6 +458,7 @@
         }
 
         function renderAudits() {
+            updateStats();
             const tbody = document.getElementById('auditTableBody');
             const search = document.getElementById('searchInput').value.toLowerCase();
             const filterConf = document.getElementById('filterConformity').value;
@@ -392,37 +476,37 @@
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-6 text-slate-500">Aucun rapport d'audit enregistré.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-500 font-medium">Aucun rapport enregistré.</td></tr>`;
                 return;
             }
 
             filtered.forEach(a => {
                 let confBadge = '';
-                if (a.conformity === 'C') confBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-emerald-950 text-emerald-400 border border-emerald-800">Conforme (C)</span>`;
-                else if (a.conformity === 'NC') confBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-red-950 text-red-400 border border-red-800">Non-Conforme (NC)</span>`;
-                else if (a.conformity === 'OBS') confBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-amber-950 text-amber-400 border border-amber-800">Obs. (OBS)</span>`;
-                else confBadge = `<span class="px-2 py-0.5 rounded text-[10px] bg-slate-800 text-slate-400 border border-slate-700">N/A</span>`;
+                if (a.conformity === 'C') confBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 inline-flex items-center gap-1"><i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Conforme</span>`;
+                else if (a.conformity === 'NC') confBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-red-500/10 text-red-400 border border-red-500/30 inline-flex items-center gap-1"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Non-Conforme</span>`;
+                else if (a.conformity === 'OBS') confBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/30 inline-flex items-center gap-1"><i data-lucide="eye" class="w-3.5 h-3.5"></i> Observation</span>`;
+                else confBadge = `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-800 text-slate-400 border border-slate-700">N/A</span>`;
 
                 const canDelete = currentUser && (currentUser.role === 'Admin' || a.auditor.toLowerCase() === currentUser.username.toLowerCase());
 
                 const row = document.createElement('tr');
-                row.className = "hover:bg-slate-800/40 transition";
+                row.className = "hover:bg-slate-800/50 transition";
                 row.innerHTML = `
-                    <td class="p-3 font-mono text-[11px] text-slate-400">${a.date}</td>
-                    <td class="p-3 font-medium text-white">${a.auditor}</td>
-                    <td class="p-3 text-slate-300">${a.employee}</td>
-                    <td class="p-3 text-slate-300">${a.itemAudited}</td>
-                    <td class="p-3">${confBadge}</td>
-                    <td class="p-3 text-slate-400">
-                        ${a.conformity === 'NC' ? `<span class="text-red-400 font-medium">[${a.severity}]</span>${a.findings}` : '-'}
+                    <td class="p-4 font-mono text-xs text-slate-400">${a.date}</td>
+                    <td class="p-4 font-bold text-white">${a.auditor}</td>
+                    <td class="p-4 text-slate-300">${a.employee}</td>
+                    <td class="p-4 font-medium text-slate-200">${a.itemAudited}</td>
+                    <td class="p-4">${confBadge}</td>
+                    <td class="p-4 text-slate-400">
+                        ${a.conformity === 'NC' ? `<span class="text-red-400 font-bold">[${a.severity}]</span>${a.findings}` : '-'}
                     </td>
-                    <td class="p-3 text-right">
+                    <td class="p-4 text-right">
                         ${canDelete ? `
-                            <button onclick="deleteAudit('${a.id}')" class="text-slate-500 hover:text-red-400 p-1 transition" title="Supprimer">
+                            <button onclick="deleteAudit('${a.id}')" class="text-slate-500 hover:text-red-400 p-2 rounded-lg hover:bg-red-500/10 transition" title="Supprimer">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         ` : `
-                            <span class="text-slate-600" title="Suppression restreinte"><i data-lucide="lock" class="w-3.5 h-3.5 inline"></i></span>
+                            <span class="text-slate-600 p-2"><i data-lucide="lock" class="w-4 h-4 inline"></i></span>
                         `}
                     </td>
                 `;
@@ -436,7 +520,7 @@
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(audits, null, 2));
             const downloadAnchor = document.createElement('a');
             downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `database_audits_cap_chat_${new Date().toISOString().slice(0,10)}.json`);
+            downloadAnchor.setAttribute("download", `audits_mecanique_cap_chat_${new Date().toISOString().slice(0,10)}.json`);
             document.body.appendChild(downloadAnchor);
             downloadAnchor.click();
             downloadAnchor.remove();
@@ -451,12 +535,12 @@
                         audits = importedData;
                         localStorage.setItem('mecanique_cap_chat_audits', JSON.stringify(audits));
                         renderAudits();
-                        alert("Base de données importée avec succès !");
+                        alert("Données importées avec succès !");
                     } else {
-                        alert("Format de fichier JSON invalide.");
+                        alert("Format JSON non valide.");
                     }
                 } catch (err) {
-                    alert("Erreur lors de la lecture du fichier JSON.");
+                    alert("Erreur lors du chargement du fichier JSON.");
                 }
             };
             fileReader.readAsText(event.target.files[0]);
