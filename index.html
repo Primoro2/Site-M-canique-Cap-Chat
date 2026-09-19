@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mécanique Cap Chat - Système d'Audit Qualité</title>
+    <title>Mécanique Cap Chat - Audit Qualité</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -16,7 +16,7 @@
             color: #f8fafc;
         }
         .aviation-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.75);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
@@ -38,25 +38,9 @@
     <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/90 backdrop-blur-md p-4">
         <div class="aviation-card w-full max-w-md p-8 rounded-2xl shadow-2xl border border-slate-700/50">
             <div class="flex flex-col items-center mb-6 text-center">
-                <!-- LOGO EMBARQUÉ SVG -->
-                <div class="w-24 h-24 mb-4 rounded-full border-2 border-red-600/80 shadow-lg shadow-red-900/30 flex items-center justify-center bg-slate-900 overflow-hidden">
-                    <svg viewBox="0 0 200 200" class="w-full h-full">
-                        <circle cx="100" cy="100" r="95" fill="#111827" stroke="#dc2626" stroke-width="4"/>
-                        <circle cx="100" cy="100" r="82" fill="none" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4,2"/>
-                        <path d="M 30 100 L 170 100 M 100 30 L 100 170" stroke="#374151" stroke-width="1"/>
-                        <!-- Avion -->
-                        <path d="M 100 45 L 112 80 L 165 95 L 165 105 L 112 102 L 108 140 L 125 152 L 125 160 L 100 152 L 75 160 L 75 152 L 92 140 L 88 102 L 35 105 L 35 95 L 88 80 Z" fill="#e2e8f0" stroke="#dc2626" stroke-width="1.5"/>
-                        <!-- Chat Stylisé -->
-                        <circle cx="100" cy="115" r="22" fill="#1f2937" stroke="#9ca3af" stroke-width="1.5"/>
-                        <polygon points="82,100 90,82 96,100" fill="#dc2626"/>
-                        <polygon points="118,100 110,82 104,100" fill="#dc2626"/>
-                        <!-- Lunettes -->
-                        <circle cx="92" cy="112" r="7" fill="#000" stroke="#9ca3af" stroke-width="1"/>
-                        <circle cx="108" cy="112" r="7" fill="#000" stroke="#9ca3af" stroke-width="1"/>
-                        <line x1="99" y1="112" x2="101" y2="112" stroke="#9ca3af" stroke-width="2"/>
-                        <text x="100" y="32" font-family="sans-serif" font-weight="bold" font-size="10" fill="#ffffff" text-anchor="middle">MÉCANIQUE CAP CHAT</text>
-                        <text x="100" y="180" font-family="sans-serif" font-weight="bold" font-size="9" fill="#dc2626" text-anchor="middle">MAINTENANCE AVIATION - AMO 30-30</text>
-                    </svg>
+                <!-- VRAI LOGO INTÉGRÉ -->
+                <div class="w-28 h-28 mb-4 rounded-full border-2 border-red-600/80 shadow-lg shadow-red-900/40 overflow-hidden bg-black flex items-center justify-center">
+                    <img src="logo.png" alt="Logo Mécanique Cap Chat" class="w-full h-full object-cover">
                 </div>
                 <h2 class="text-xl font-bold text-white tracking-wide">MÉCANIQUE CAP CHAT</h2>
                 <p class="text-xs text-slate-400 mt-1">Accès Portail Audit Qualité (AMO 30-30)</p>
@@ -65,14 +49,13 @@
             <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Nom d'utilisateur</label>
-                    <input type="text" id="usernameInput" required placeholder="Ex: Jean Dupont, Admin..." 
+                    <input type="text" id="usernameInput" required placeholder="Saisissez votre identifiant" 
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition">
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Mot de Passe / PIN</label>
-                    <input type="password" id="passwordInput" required placeholder="Mot de passe ou PIN (ex: 1234)" 
+                    <input type="password" id="passwordInput" required placeholder="Mot de passe" 
                         class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-red-500 transition">
-                    <p class="text-[10px] text-slate-400 mt-1">💡 Par défaut: Mot de passe <b>1234</b> (Employé) ou <b>0000</b> (Admin).</p>
                 </div>
 
                 <div id="loginError" class="hidden text-xs text-red-400 bg-red-950/50 border border-red-800/50 rounded-lg p-2.5 text-center">
@@ -90,11 +73,8 @@
     <header class="bg-slate-900/80 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full border border-red-500/50 flex items-center justify-center bg-slate-950 overflow-hidden">
-                    <svg viewBox="0 0 200 200" class="w-full h-full">
-                        <circle cx="100" cy="100" r="95" fill="#111827" stroke="#dc2626" stroke-width="4"/>
-                        <path d="M 100 45 L 112 80 L 165 95 L 165 105 L 112 102 L 108 140 L 125 152 L 125 160 L 100 152 L 75 160 L 75 152 L 92 140 L 88 102 L 35 105 L 35 95 L 88 80 Z" fill="#e2e8f0"/>
-                    </svg>
+                <div class="w-10 h-10 rounded-full border border-red-500/50 overflow-hidden bg-black flex items-center justify-center">
+                    <img src="logo.png" alt="Logo" class="w-full h-full object-cover">
                 </div>
                 <div>
                     <h1 class="text-base font-bold text-white leading-none">MÉCANIQUE CAP CHAT</h1>
@@ -129,19 +109,16 @@
 
             <form id="auditForm" onsubmit="saveAudit(event)" class="space-y-6">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Date pré-remplie -->
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Date d'audit (Horodatée)</label>
                         <input type="text" id="auditDate" readonly class="w-full bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-400 font-mono cursor-not-allowed">
                     </div>
 
-                    <!-- Inspecteur/Auditeur -->
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Auditeur / Inspecteur</label>
                         <input type="text" id="auditor" readonly class="w-full bg-slate-900/60 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-300 font-medium cursor-not-allowed">
                     </div>
 
-                    <!-- Employé Auditée -->
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Employé / Technicien Audité</label>
                         <input type="text" id="employee" required placeholder="Nom du technicien" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
@@ -149,13 +126,11 @@
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Élément / Processus -->
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Élément / Processus Audité</label>
                         <input type="text" id="itemAudited" required placeholder="Ex: Outillage, Dossier de maintenance C172..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
                     </div>
 
-                    <!-- Indice de Conformité -->
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Indice de Conformité</label>
                         <select id="conformity" onchange="toggleNcFields()" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
@@ -211,7 +186,7 @@
         <section class="aviation-card rounded-2xl p-6 shadow-xl border border-slate-800 space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
                 <h2 class="text-lg font-bold text-white flex items-center gap-2">
-                    <i data-lucide="list" class="text-red-500 w-5 h-5"></i> Registre des Audits Registrés
+                    <i data-lucide="list" class="text-red-500 w-5 h-5"></i> Registre des Audits Enregistrés
                 </h2>
 
                 <div class="flex items-center gap-2">
@@ -225,7 +200,6 @@
                 </div>
             </div>
 
-            <!-- Filtres -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                     <input type="text" id="searchInput" oninput="renderAudits()" placeholder="Rechercher par employé, auditeur, élément..." class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-white focus:ring-1 focus:ring-red-500 outline-none">
@@ -241,7 +215,6 @@
                 </div>
             </div>
 
-            <!-- TABLEAU DES DONNÉES -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-xs">
                     <thead class="bg-slate-900/80 text-slate-400 uppercase tracking-wider border-b border-slate-800">
@@ -256,7 +229,6 @@
                         </tr>
                     </thead>
                     <tbody id="auditTableBody" class="divide-y divide-slate-800 text-slate-300">
-                        <!-- Rempli dynamiquement -->
                     </tbody>
                 </table>
             </div>
@@ -264,24 +236,19 @@
     </main>
 
     <footer class="bg-slate-950 border-t border-slate-800 py-4 text-center text-xs text-slate-500">
-        Mécanique Cap Chat (AMO 30-30) &copy; 2026 - Système de Gestion Qualité Avancé
+        Mécanique Cap Chat (AMO 30-30) &copy; 2026 - Système de Gestion Qualité
     </footer>
 
     <script>
         let currentUser = null;
+        let userDatabase = {};
         let audits = JSON.parse(localStorage.getItem('mecanique_cap_chat_audits') || '[]');
 
-        // Mots de passe / PINs autorisés
-        const CREDENTIALS = {
-            'admin': { pin: '0000', role: 'Admin' },
-            'direction': { pin: '0000', role: 'Admin' }
-        };
-
-        window.onload = function() {
+        window.onload = async function() {
             lucide.createIcons();
             setCurrentDate();
+            await loadUsersConfig();
             
-            // Vérifier session active
             const savedUser = sessionStorage.getItem('cap_chat_user');
             if (savedUser) {
                 currentUser = JSON.parse(savedUser);
@@ -290,6 +257,22 @@
                 document.getElementById('loginModal').classList.remove('hidden');
             }
         };
+
+        // Chargement dynamique du fichier JSON externe des utilisateurs
+        async function loadUsersConfig() {
+            try {
+                const response = await fetch('users.json');
+                if (response.ok) {
+                    userDatabase = await response.json();
+                } else {
+                    console.warn("Impossible de charger users.json, repli sur la configuration locale.");
+                    userDatabase = { "admin": { "password": "0000", "role": "Admin" } };
+                }
+            } catch (error) {
+                console.error("Erreur de chargement users.json:", error);
+                userDatabase = { "admin": { "password": "0000", "role": "Admin" } };
+            }
+        }
 
         function setCurrentDate() {
             const now = new Date();
@@ -305,27 +288,17 @@
 
             if (!username) return;
 
-            // Vérification du Mot de Passe / PIN
-            let role = 'Employé';
-            const userLower = username.toLowerCase();
+            const userKey = username.toLowerCase();
+            const account = userDatabase[userKey];
 
-            if (CREDENTIALS[userLower]) {
-                if (password !== CREDENTIALS[userLower].pin) {
-                    errorDiv.classList.remove('hidden');
-                    return;
-                }
-                role = CREDENTIALS[userLower].role;
-            } else {
-                // Pour les employés réguliers, le PIN par défaut est 1234
-                if (password !== '1234' && password !== '0000') {
-                    errorDiv.classList.remove('hidden');
-                    return;
-                }
-                if (password === '0000') role = 'Admin';
+            // Vérification stricte
+            if (!account || account.password !== password) {
+                errorDiv.classList.remove('hidden');
+                return;
             }
 
             errorDiv.classList.add('hidden');
-            currentUser = { username: username, role: role };
+            currentUser = { username: username, role: account.role || 'Employe' };
             sessionStorage.setItem('cap_chat_user', JSON.stringify(currentUser));
 
             applyUserSession();
@@ -377,7 +350,6 @@
             audits.unshift(newAudit);
             localStorage.setItem('mecanique_cap_chat_audits', JSON.stringify(audits));
             
-            // Réinitialiser le formulaire
             document.getElementById('auditForm').reset();
             setCurrentDate();
             document.getElementById('auditor').value = currentUser.username;
@@ -390,7 +362,6 @@
             const auditToDelete = audits.find(a => a.id === id);
             if (!auditToDelete) return;
 
-            // Restricton de suppression : Seul l'Admin ou l'auteur de l'audit peut supprimer
             if (currentUser.role !== 'Admin' && auditToDelete.auditor.toLowerCase() !== currentUser.username.toLowerCase()) {
                 alert("🔒 Autorisation refusée : Vous ne pouvez supprimer que vos propres rapports d'audit.");
                 return;
